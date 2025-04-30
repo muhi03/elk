@@ -187,6 +187,15 @@ const userSettings = useUserSettings()
           {{ $t('settings.preferences.user_picker_description') }}
         </template>
       </SettingsToggleItem>
+       <SettingsToggleItem
+        :checked="getPreferences(userSettings, 'experimentalScrollTracker')"
+        @click="togglePreferences('experimentalScrollTracker')"
+      >
+        {{ $t('settings.preferences.scroll_tracker') }}
+        <template #description>
+          {{ $t('settings.preferences.scroll_tracker_description') }}
+        </template>
+      </SettingsToggleItem>
     </section>
   </MainContent>
 </template>

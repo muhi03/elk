@@ -9,6 +9,13 @@ export function useUserSettings() {
   const supportLanguages = (unref(locales) as LocaleObject[]).map(locale => locale.code)
   const settingsStorage = useUserLocalStorage<UserSettings>(STORAGE_KEY_SETTINGS, () => getDefaultUserSettings(supportLanguages))
 
+  // Convert scrollTrackerSettings to a Map when accessing
+  if (settingsStorage.value.scrollTrackerSettings) {
+    settingsStorage.value.scrollTrackerSettings = new Map(
+      Object.entries(settingsStorage.value.scrollTrackerSettings)
+    )
+  }
+  
   // Backward compatibility, font size was xs, sm, md, lg, xl before
   if (settingsStorage.value.fontSize && !settingsStorage.value.fontSize.includes('px'))
     settingsStorage.value.fontSize = oldFontSizeMap[settingsStorage.value.fontSize as OldFontSize] as FontSize
@@ -42,4 +49,16 @@ export function getPreferences<T extends keyof PreferencesSettings>(userSettings
 export function togglePreferences(key: keyof PreferencesSettings) {
   const flag = usePreferences(key)
   flag.value = !flag.value
+}
+
+export function useScrollTracker(): Ref<Map<string, number>> {
+  const userSettings = useUserSettings()
+  return computed({
+    get() {
+      return new Map(Object.entries(userSettings.value.scrollTrackerSettings || {}))
+    },
+    set(value : Map<string, number>) {
+      userSettings.value.scrollTrackerSettings = Object.fromEntries(value)
+    },
+  })
 }

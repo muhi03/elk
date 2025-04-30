@@ -67,6 +67,8 @@ const exploreLink = computed(() => {
 
     <div class="spacer" shrink hidden sm:block />
     <NavSideItem :text="$t('nav.settings')" to="/settings" icon="i-ri:settings-3-line" :command="command" />
+
+    <NavSideItem :text="$t('nav.scroll_tracker_list')" to="/scrolltracker" icon="i-tabler:brand-matrix" :command="command" />
   </nav>
 </template>
 

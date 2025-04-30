@@ -11,6 +11,7 @@ dist
 .netlify/
 .eslintcache
 elk-translation-status.json
+.vscode
 
 public/emojis
 

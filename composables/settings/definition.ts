@@ -33,6 +33,7 @@ export interface PreferencesSettings {
   experimentalGitHubCards: boolean
   experimentalUserPicker: boolean
   experimentalEmbeddedMedia: boolean
+  experimentalScrollTracker: boolean
 }
 
 export interface UserSettings {
@@ -42,6 +43,7 @@ export interface UserSettings {
   language: string
   disabledTranslationLanguages: string[]
   themeColors?: ThemeColors
+  scrollTrackerSettings: {}
 }
 
 export interface ThemeColors {
@@ -90,6 +92,7 @@ export const DEFAULT__PREFERENCES_SETTINGS: PreferencesSettings = {
   experimentalGitHubCards: true,
   experimentalUserPicker: true,
   experimentalEmbeddedMedia: false,
+  experimentalScrollTracker: false,
 }
 
 export function getDefaultUserSettings(locales: string[]): UserSettings {
@@ -98,5 +101,6 @@ export function getDefaultUserSettings(locales: string[]): UserSettings {
     fontSize: DEFAULT_FONT_SIZE,
     disabledTranslationLanguages: [],
     preferences: DEFAULT__PREFERENCES_SETTINGS,
+    scrollTrackerSettings: {}
   }
 }
