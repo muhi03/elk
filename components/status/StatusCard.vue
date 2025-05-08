@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import type { mastodon } from "masto";
-import { onMounted, onUnmounted, ref } from "vue"; // test muhi
+import type { mastodon } from 'masto'
+import { onMounted, onUnmounted, ref, watch } from 'vue' // test muhi
 
 const {
   actions = true,
@@ -11,37 +11,38 @@ const {
   main,
   ...props
 } = defineProps<{
-  status: mastodon.v1.Status;
-  followedTag?: string | null;
-  actions?: boolean;
-  context?: mastodon.v2.FilterContext;
-  hover?: boolean;
-  inNotification?: boolean;
-  isPreview?: boolean;
+  status: mastodon.v1.Status
+  followedTag?: string | null
+  actions?: boolean
+  context?: mastodon.v2.FilterContext
+  hover?: boolean
+  inNotification?: boolean
+  isPreview?: boolean
 
   // If we know the prev and next status in the timeline, we can simplify the card
-  older?: mastodon.v1.Status;
-  newer?: mastodon.v1.Status;
+  older?: mastodon.v1.Status
+  newer?: mastodon.v1.Status
   // Manual overrides
-  hasOlder?: boolean;
-  hasNewer?: boolean;
+  hasOlder?: boolean
+  hasNewer?: boolean
 
   // When looking into a detailed view of a post, we can simplify the replying badges
   // to the main expanded post
-  main?: mastodon.v1.Status;
-}>();
+  main?: mastodon.v1.Status
+}>()
 
-const userSettings = useUserSettings();
+const userSettings = useUserSettings()
 
 const status = computed(() => {
   if (
     props.status.reblog &&
     (!props.status.content ||
       props.status.content === props.status.reblog.content)
-  )
-    return props.status.reblog;
-  return props.status;
-});
+  ) {
+    return props.status.reblog
+  }
+  return props.status
+})
 
 // Use original status, avoid connecting a reblog
 const directReply = computed(
@@ -50,102 +51,134 @@ const directReply = computed(
     (!!status.value.inReplyToId &&
       (status.value.inReplyToId === newer?.id ||
         status.value.inReplyToId === newer?.reblog?.id))
-);
+)
 // Use reblogged status, connect it to further replies
 const connectReply = computed(
   () =>
     hasOlder ||
     status.value.id === older?.inReplyToId ||
     status.value.id === older?.reblog?.inReplyToId
-);
+)
 // Open a detailed status, the replies directly to it
-const replyToMain = computed(
-  () => main && main.id === status.value.inReplyToId
-);
+const replyToMain = computed(() => main && main.id === status.value.inReplyToId)
 
 const rebloggedBy = computed(() =>
   props.status.reblog ? props.status.account : null
-);
+)
 
-const statusRoute = computed(() => getStatusRoute(status.value));
+const statusRoute = computed(() => getStatusRoute(status.value))
 
-const router = useRouter();
+const router = useRouter()
 
 function go(evt: MouseEvent | KeyboardEvent) {
   if (evt.metaKey || evt.ctrlKey) {
-    window.open(statusRoute.value.href);
+    window.open(statusRoute.value.href)
   } else {
-    cacheStatus(status.value);
-    router.push(statusRoute.value);
+    cacheStatus(status.value)
+    router.push(statusRoute.value)
   }
 }
 
 // begin test muhi
-const tracker = useScrollTracker();
+const tracker = useScrollTrackerData()
+// function trackVisibility() {
+//   const observer = new IntersectionObserver(
+//     ([entry]) => {
+//       const key = status.value.account.username
+//       if (entry.isIntersecting) {
+//         const intersectingInt = 1
+//         console.log('Intersecting:', entry, 'User:', key)
+
+//         // Ensure tracker.value is a Map
+//         if (!(tracker.value instanceof Map)) {
+//           tracker.value = new Map()
+//         }
+
+//         // Now safely use the set method
+//         tracker.value.set(key, intersectingInt)
+//         tracker.value = new Map(tracker.value) // Trigger reactivity
+//         console.log('Updated tracker:', tracker.value)
+//       } else {
+//         const nonIntersectingInt = 0
+//         // Ensure tracker.value is a Map
+//         if (!(tracker.value instanceof Map)) {
+//           tracker.value = new Map()
+//         }
+
+//         // Now safely use the set method
+//         tracker.value.set(key, nonIntersectingInt)
+//         tracker.value = new Map(tracker.value) // Trigger reactivity
+//       }
+//     },
+//     { threshold: 0.05 } // Adjust threshold as needed
+//   )
 
 function trackVisibility() {
   const observer = new IntersectionObserver(
     ([entry]) => {
-      const key = status.value.account.username;
+      const key = status.value.account.username
+      // console.log('key', key)
       if (entry.isIntersecting) {
-        const intersectingInt = 1;
-        console.log("Intersecting:", entry, "User:", key);
-
-        // Ensure tracker.value is a Map
-        if (!(tracker.value instanceof Map)) {
-          tracker.value = new Map();
+        if (entry.intersectionRatio > 0.5) {
+          // console.log('Intersecting:', entry, 'User:', key)
+          const found = tracker.value.find((p) => p.name === key) // Check if the key already exists in the tracker
+          if (found) {
+            found.timeSpent = Date.now() // Update the time spent
+            console.log('Account:', status.value.account)
+          } else {
+            tracker.value.push({ name: key, timeSpent: Date.now() }) // Add a new entry
+          }
         }
-
-        // Now safely use the set method
-        tracker.value.set(key, intersectingInt);
-        tracker.value = new Map(tracker.value); // Trigger reactivity
       } else {
-        const nonIntersectingInt = 0;
-        // Ensure tracker.value is a Map
-        if (!(tracker.value instanceof Map)) {
-          tracker.value = new Map();
-        }
-
-        // Now safely use the set method
-        tracker.value.set(key, nonIntersectingInt);
-        tracker.value = new Map(tracker.value); // Trigger reactivity
+        // const startTime = tracker.value.get(key)
+        // if (startTime) {
+        //   const duration = Date.now() - startTime
+        //   console.log(key, ' is not visible:')
+        //   console.log(key, ` spent ${duration}ms on screen`)
+        //   console.log('tracker.value', tracker.value)
+        //   // tracker.value.delete(key) // Clean up after tracking
       }
     },
-    { threshold: 0.05 } // Adjust threshold as needed
-  );
+    {
+      threshold: 0.05,
+      rootMargin: '0px', // Adjust the root margin to trigger earlier
+    } // Adjust threshold as needed
+  )
 
   onMounted(() => {
-    const element = document.querySelector('[id^="status-"]'); //document.querySelector(".vue-recycle-scroller__item-view"); // Replace with the correct class or ref
-    // var test = element.getAttribute('status')
-
-    if (element) observer.observe(element);
-  });
+    // watch(() => {
+    nextTick(() => {
+      const elements = document.querySelectorAll('[id^="status-"]')
+      elements.forEach((el) => observer.observe(el))
+    })
+    // })
+  })
 
   onUnmounted(() => {
-    observer.disconnect();
-  });
+    observer.disconnect()
+  })
 }
 
-trackVisibility();
+trackVisibility()
 // end test muhi
 
-const createdAt = useFormattedDateTime(status.value.createdAt);
-const timeAgoOptions = useTimeAgoOptions(true);
-const timeago = useTimeAgo(() => status.value.createdAt, timeAgoOptions);
+const createdAt = useFormattedDateTime(status.value.createdAt)
+const timeAgoOptions = useTimeAgoOptions(true)
+const timeago = useTimeAgo(() => status.value.createdAt, timeAgoOptions)
 
 const isSelfReply = computed(
   () => status.value.inReplyToAccountId === status.value.account.id
-);
+)
 const collapseRebloggedBy = computed(
   () => rebloggedBy.value?.id === status.value.account.id
-);
-const isDM = computed(() => status.value.visibility === "direct");
-const isPinned = computed(() => status.value.pinned);
+)
+const isDM = computed(() => status.value.visibility === 'direct')
+const isPinned = computed(() => status.value.pinned)
 
-const showUpperBorder = computed(() => newer && !directReply.value);
-const showReplyTo = computed(() => !replyToMain.value && !directReply.value);
+const showUpperBorder = computed(() => newer && !directReply.value)
+const showReplyTo = computed(() => !replyToMain.value && !directReply.value)
 
-const forceShow = ref(false);
+const forceShow = ref(false)
 </script>
 
 <template>
@@ -191,7 +224,7 @@ const forceShow = ref(false);
           ws-nowrap
         >
           <div i-ri:pushpin-line />
-          <span>{{ $t("status.pinned") }}</span>
+          <span>{{ $t('status.pinned') }}</span>
         </div>
       </div>
 
@@ -261,7 +294,7 @@ const forceShow = ref(false);
       <template v-if="status.account.suspended && !forceShow">
         <div flex="~col 1" min-w-0>
           <p italic>
-            {{ $t("status.account.suspended_message") }}
+            {{ $t('status.account.suspended_message') }}
           </p>
           <div>
             <button
@@ -273,7 +306,7 @@ const forceShow = ref(false);
               @click="forceShow = true"
             >
               <div i-ri:eye-line />
-              <span>{{ $t("status.account.suspended_show") }}</span>
+              <span>{{ $t('status.account.suspended_show') }}</span>
             </button>
           </div>
         </div>

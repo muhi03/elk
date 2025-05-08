@@ -7,7 +7,21 @@ export type OldFontSize = 'xs' | 'sm' | 'md' | 'lg' | 'xl'
 
 export type ColorMode = 'light' | 'dark' | 'system'
 
-export type NavButtonName = 'home' | 'search' | 'notification' | 'mention' | 'favorite' | 'bookmark' | 'compose' | 'explore' | 'local' | 'federated' | 'list' | 'hashtag' | 'setting' | 'moreMenu'
+export type NavButtonName =
+  | 'home'
+  | 'search'
+  | 'notification'
+  | 'mention'
+  | 'favorite'
+  | 'bookmark'
+  | 'compose'
+  | 'explore'
+  | 'local'
+  | 'federated'
+  | 'list'
+  | 'hashtag'
+  | 'setting'
+  | 'moreMenu'
 
 export interface PreferencesSettings {
   hideAltIndicatorOnPosts: boolean
@@ -43,7 +57,7 @@ export interface UserSettings {
   language: string
   disabledTranslationLanguages: string[]
   themeColors?: ThemeColors
-  scrollTrackerSettings: {}
+  scrollTrackerData: { name: string; timeSpent: number }[]
 }
 
 export interface ThemeColors {
@@ -63,8 +77,7 @@ export interface ThemeColors {
 }
 
 export function getDefaultLanguage(languages: string[]) {
-  if (import.meta.server)
-    return 'en-US'
+  if (import.meta.server) return 'en-US'
   return matchLanguages(languages, navigator.languages) || 'en-US'
 }
 
@@ -101,6 +114,8 @@ export function getDefaultUserSettings(locales: string[]): UserSettings {
     fontSize: DEFAULT_FONT_SIZE,
     disabledTranslationLanguages: [],
     preferences: DEFAULT__PREFERENCES_SETTINGS,
-    scrollTrackerSettings: {}
+    scrollTrackerData: [],
   }
 }
+
+// const trackerData = { name:string, timeSpent:number } []
