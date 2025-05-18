@@ -144,19 +144,20 @@ export default defineNuxtConfig({
   },
   appConfig: {
     storage: {
-      driver: process.env.NUXT_STORAGE_DRIVER ?? (isCI ? 'cloudflare' : 'fs'),
+      // driver: process.env.NUXT_STORAGE_DRIVER ?? (isCI ? 'cloudflare' : 'fs'),
+      driver: 'fs',
     },
   },
   runtimeConfig: {
     adminKey: '',
-    cloudflare: {
-      accountId: '',
-      namespaceId: '',
-      apiToken: '',
-    },
+    // cloudflare: {
+    //   accountId: '',
+    //   namespaceId: '',
+    //   apiToken: '',
+    // },
     vercel: {
-      url: '',
-      token: '',
+      url: 'https://elk-wine.vercel.app/',
+      token: 'brWuDs2o8eYRCffJeM6ryrA1',
       env: '',
       base: '',
     },
