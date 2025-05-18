@@ -1,0 +1,1 @@
+.status-body.with-action p{cursor:pointer}.status-media-container{--grid-cols: var(--313387ab);display:grid;grid-template-columns:repeat(var(--grid-cols, 1),1fr);gap:.5rem;overflow:hidden;position:relative;width:100%}iframe{height:100%;width:100%}
