@@ -1,0 +1,1 @@
+import{T as n,e as s,o as r,g as o,af as a,G as i,t as c}from"./vIUoIwJY.js";const _={},d={flex:"~ col","items-center":""},l={"text-lg":""};function f(e,t){return r(),s("div",d,[t[0]||(t[0]=o("div",{"i-ri:forbid-line":"","text-10":"",mt10:"",mb2:""},null,-1)),o("div",l,[a(e.$slots,"default",{},()=>[i(c(e.$t("common.not_found")),1)])])])}const p=n(_,[["render",f]]);export{p as _};

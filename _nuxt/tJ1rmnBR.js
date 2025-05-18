@@ -1,1 +1,0 @@
-import{_ as e}from"./BLgHThrl.js";import{d as n,l as r,i,n as c,p,o as l,O as _,P as m,h as u}from"./DsX_WIiI.js";import"./nlvPIzJJ.js";const x=n({__name:"index",setup(d){const{t:a}=r(),{client:s}=i(),t=s.value.v1.followedTags.list({limit:20});return c({title:()=>a("nav.hashtags")}),(f,g)=>{const o=e;return l(),p(o,_(m({paginator:u(t)})),null,16)}}});export{x as default};
