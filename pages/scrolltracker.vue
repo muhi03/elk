@@ -14,16 +14,21 @@ const { t } = useI18n()
 //  : null
 // const tracker = useScrollTracker()
 
-const dummyData = [
-  { username: 'user1', timeSpent: Date.now() },
-  { username: 'user2', timeSpent: Date.now() },
-  { username: 'user3', timeSpent: Date.now() },
-  { username: 'user4', timeSpent: Date.now() },
-  { username: 'user5', timeSpent: Date.now() },
-  { username: 'user6', timeSpent: Date.now() },
-  { username: 'user7', timeSpent: Date.now() },
-  { username: 'user8', timeSpent: Date.now() },
-]
+const scrollTrackerData = useUserSettings().value.scrollTrackerData
+scrollTrackerData.sort((a, b) => {
+  return (b.timeSpent || 0) - (a.timeSpent || 0)
+})
+
+// [
+//   { username: 'user1', timeSpent: Date.now() },
+//   { username: 'user2', timeSpent: Date.now() },
+//   { username: 'user3', timeSpent: Date.now() },
+//   { username: 'user4', timeSpent: Date.now() },
+//   { username: 'user5', timeSpent: Date.now() },
+//   { username: 'user6', timeSpent: Date.now() },
+//   { username: 'user7', timeSpent: Date.now() },
+//   { username: 'user8', timeSpent: Date.now() },
+// ]
 // const scrollListArray = computed(() => Array.from(tracker.value.entries()))
 // console.log('test', scrollListArray.value)
 
@@ -88,16 +93,21 @@ useHydratedHead({
   </NuxtLink>
   <!-- <TimelinePinned v-if="isHydrated && currentUser" /> -->
   <div
-    v-for="item in dummyData"
+    v-for="item in scrollTrackerData"
     :key="item.username"
     class="scroll-item"
     border="b base"
     py2
     px4
   >
+    <!-- <AccountCardScroller :trackerObject="item" /> -->
     <AccountCardScroller
-      :username="item.username"
-      :start="new Date(item.timeSpent)"
+      :account="item.account"
+      :timeSpent="item.timeSpent || 0"
+      hover-card
+      border="b base"
+      py2
+      px4
     />
   </div>
 </template>

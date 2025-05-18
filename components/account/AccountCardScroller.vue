@@ -1,30 +1,22 @@
 <script setup lang="ts">
-import type { UseDateFormatReturn } from '@vueuse/core/index.cjs'
 import type { mastodon } from 'masto'
-import Scrolltracker from '~/pages/scrolltracker.vue'
 
 const { account } = defineProps<{
-  account?: mastodon.v1.Account
-  username: mastodon.v1.Account['username']
+  account: mastodon.v1.Account
   hoverCard?: boolean
-  start: Date
-  end?: Date
+  relationshipContext?: 'followedBy' | 'following'
+  timeSpent: number
 }>()
 
-// cacheAccount(account)
+cacheAccount(account)
 
-// function showSpendTime() {
-//   const scrollTracker = useScrollTracker()
-//   const values = ScrollTracker.value
-//   return values.get(account.username.toString())
-// }
-
-// console.log('account', account)
+const isSelf = useSelfAccount(() => account)
+const relationship = useRelationship(account)
 </script>
 
 <template>
   <div flex justify-between hover:bg-active transition-100>
-    <!-- <AccountInfo
+    <AccountInfo
       :account="account"
       hover
       p1
@@ -33,15 +25,45 @@ const { account } = defineProps<{
       shrink
       overflow-hidden
       :to="getAccountRoute(account)"
-    /> -->
-    <!-- <slot> -->
-    <div h-full p1 shrink-0>
-      <!-- <AccountFollowButton
+    />
+    <!-- <slot>
+      <div h-full p1 shrink-0>{{ timeSpent.toFixed(2) }} seconds</div>
+    </slot> -->
+    <span inset-ie-0 flex gap-2 items-right>
+      <slot h-full p1 shrink-0>
+        <CommonTooltip :content="$t('list.modify_account')">
+          <VDropdown v-if="!isSelf && relationship?.following">
+            <!-- missing is still the proper design and maybe a check for user account if it is self -->
+            <!-- <VDropdown> -->
+            <button
+              :aria-label="$t('list.modify_account')"
+              rounded-full
+              text-sm
+              p2
+              border-1
+              transition-colors
+              border-base
+              hover:text-primary
+            >
+              <!-- border-red
+              text-red -->
+              <span i-ri:play-list-add-fill block text-current />
+            </button>
+            <template #popper>
+              <ListLists :user-id="account.id" />
+            </template>
+          </VDropdown>
+        </CommonTooltip>
+      </slot>
+
+      <slot>
+        <!-- <div h-full p1 shrink-0> -->
+        <AccountFollowButton
           :account="account"
           :context="relationshipContext"
-        /> -->
-      <div>{{ username }}</div>
-    </div>
-    <!-- </slot> -->
+        />
+        <!-- </div> -->
+      </slot>
+    </span>
   </div>
 </template>

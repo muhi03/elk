@@ -1,6 +1,10 @@
 <script setup lang="ts">
 import type { mastodon } from 'masto'
-import { onMounted, onUnmounted, ref, watch } from 'vue' // test muhi
+import { onMounted, onUnmounted, ref } from 'vue' // test muhi
+import {
+  useScrollTrackerData,
+  type TrackerObject,
+} from '~/composables/settings'
 
 const {
   actions = true,
@@ -81,62 +85,47 @@ function go(evt: MouseEvent | KeyboardEvent) {
 
 // begin test muhi
 const tracker = useScrollTrackerData()
-// function trackVisibility() {
-//   const observer = new IntersectionObserver(
-//     ([entry]) => {
-//       const key = status.value.account.username
-//       if (entry.isIntersecting) {
-//         const intersectingInt = 1
-//         console.log('Intersecting:', entry, 'User:', key)
-
-//         // Ensure tracker.value is a Map
-//         if (!(tracker.value instanceof Map)) {
-//           tracker.value = new Map()
-//         }
-
-//         // Now safely use the set method
-//         tracker.value.set(key, intersectingInt)
-//         tracker.value = new Map(tracker.value) // Trigger reactivity
-//         console.log('Updated tracker:', tracker.value)
-//       } else {
-//         const nonIntersectingInt = 0
-//         // Ensure tracker.value is a Map
-//         if (!(tracker.value instanceof Map)) {
-//           tracker.value = new Map()
-//         }
-
-//         // Now safely use the set method
-//         tracker.value.set(key, nonIntersectingInt)
-//         tracker.value = new Map(tracker.value) // Trigger reactivity
-//       }
-//     },
-//     { threshold: 0.05 } // Adjust threshold as needed
-//   )
 
 function trackVisibility() {
+  const scrollTrackerFlag = getPreferences(
+    userSettings.value,
+    'experimentalScrollTracker'
+  )
+  if (scrollTrackerFlag === false) {
+    return
+  }
   const observer = new IntersectionObserver(
     ([entry]) => {
       const key = status.value.account.username
-      // console.log('key', key)
       if (entry.isIntersecting) {
-        if (entry.intersectionRatio > 0.5) {
-          // console.log('Intersecting:', entry, 'User:', key)
-          const found = tracker.value.find((p) => p.name === key) // Check if the key already exists in the tracker
+        if (entry.intersectionRatio > 0.2) {
+          const found = tracker.value.find(
+            (t: TrackerObject) => t.username === key
+          ) // Check if the key already exists in the tracker
           if (found) {
-            found.timeSpent = Date.now() // Update the time spent
-            console.log('Account:', status.value.account)
+            found.enterTime = Date.now() // Update the enter date
+            found.leaveTime = 0 // Reset the leave date
           } else {
-            tracker.value.push({ name: key, timeSpent: Date.now() }) // Add a new entry
+            const trackerObject: TrackerObject = {
+              account: status.value.account,
+              username: status.value.account.username,
+              url: status.value.account.url,
+              enterTime: Date.now(),
+              leaveTime: 0,
+            }
+            tracker.value.push(trackerObject) // Add a new entry
           }
         }
       } else {
-        // const startTime = tracker.value.get(key)
-        // if (startTime) {
-        //   const duration = Date.now() - startTime
-        //   console.log(key, ' is not visible:')
-        //   console.log(key, ` spent ${duration}ms on screen`)
-        //   console.log('tracker.value', tracker.value)
-        //   // tracker.value.delete(key) // Clean up after tracking
+        const found = tracker.value.find(
+          (t: TrackerObject) => t.username === key
+        ) // Check if the key already exists in the tracker
+        if (found) {
+          found.leaveTime = Date.now() // Update the enter date
+          found.timeSpent =
+            found.timespent || 0 + (found.leaveTime - found.enterTime) / 1000 // Update time spent
+          console.log('User:', found.username, 'spent', found.timeSpent, 's')
+        }
       }
     },
     {

@@ -9,6 +9,7 @@ defineProps<{
 }>()
 const { notifications } = useNotifications()
 const useStarFavoriteIcon = usePreferences('useStarFavoriteIcon')
+const useScrollTracker = usePreferences('experimentalScrollTracker')
 const lastAccessedNotificationRoute = useLocalStorage(
   STORAGE_KEY_LAST_ACCESSED_NOTIFICATION_ROUTE,
   ''
@@ -176,6 +177,7 @@ const exploreLink = computed(() => {
     />
 
     <NavSideItem
+      v-if="useScrollTracker"
       :text="$t('nav.scroll_tracker_list')"
       to="/scrolltracker"
       icon="i-tabler:brand-matrix"

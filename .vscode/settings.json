@@ -25,6 +25,11 @@
 
   // Disable the default formatter, use eslint instead
   "prettier.enable": true,
+  "prettier.singleQuote": true,
+  "prettier.semi": false,
+  "prettier.trailingComma": "es5",
+  "prettier.singleAttributePerLine": false,
+  "editor.formatOnPaste": true,
   "editor.formatOnSave": true,
 
   // Auto fix

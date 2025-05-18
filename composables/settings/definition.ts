@@ -1,3 +1,4 @@
+import type { mastodon } from 'masto'
 import { DEFAULT_FONT_SIZE } from '~/constants'
 
 export type FontSize = `${number}px`
@@ -50,6 +51,15 @@ export interface PreferencesSettings {
   experimentalScrollTracker: boolean
 }
 
+export interface TrackerObject {
+  account: mastodon.v1.Account
+  username: string
+  url: string
+  enterTime: number
+  leaveTime: number
+  timeSpent?: number
+}
+
 export interface UserSettings {
   preferences: Partial<PreferencesSettings>
   colorMode?: ColorMode
@@ -57,7 +67,7 @@ export interface UserSettings {
   language: string
   disabledTranslationLanguages: string[]
   themeColors?: ThemeColors
-  scrollTrackerData: { name: string; timeSpent: number }[]
+  scrollTrackerData: TrackerObject[]
 }
 
 export interface ThemeColors {

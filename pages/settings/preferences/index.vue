@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { resetTrackerDataOnUncheck } from '~/composables/settings'
+
 const { t } = useI18n()
 
 useHydratedHead({
@@ -58,7 +60,9 @@ const userSettings = useUserSettings()
         {{ $t('settings.preferences.unmute_videos') }}
       </SettingsToggleItem>
       <SettingsToggleItem
-        :checked="getPreferences(userSettings, 'optimizeForLowPerformanceDevice')"
+        :checked="
+          getPreferences(userSettings, 'optimizeForLowPerformanceDevice')
+        "
         @click="togglePreferences('optimizeForLowPerformanceDevice')"
       >
         {{ $t('settings.preferences.optimize_for_low_performance_device') }}
@@ -67,9 +71,9 @@ const userSettings = useUserSettings()
         :checked="getPreferences(userSettings, 'enableDataSaving')"
         @click="togglePreferences('enableDataSaving')"
       >
-        {{ $t("settings.preferences.enable_data_saving") }}
+        {{ $t('settings.preferences.enable_data_saving') }}
         <template #description>
-          {{ $t("settings.preferences.enable_data_saving_description") }}
+          {{ $t('settings.preferences.enable_data_saving_description') }}
         </template>
       </SettingsToggleItem>
       <SettingsToggleItem
@@ -124,7 +128,7 @@ const userSettings = useUserSettings()
         :checked="getPreferences(userSettings, 'hideUsernameEmojis')"
         @click="togglePreferences('hideUsernameEmojis')"
       >
-        {{ $t("settings.preferences.hide_username_emojis") }}
+        {{ $t('settings.preferences.hide_username_emojis') }}
         <template #description>
           {{ $t('settings.preferences.hide_username_emojis_description') }}
         </template>
@@ -133,13 +137,13 @@ const userSettings = useUserSettings()
         :checked="getPreferences(userSettings, 'hideNews')"
         @click="togglePreferences('hideNews')"
       >
-        {{ $t("settings.preferences.hide_news") }}
+        {{ $t('settings.preferences.hide_news') }}
       </SettingsToggleItem>
       <SettingsToggleItem
         :checked="getPreferences(userSettings, 'zenMode')"
         @click="togglePreferences('zenMode')"
       >
-        {{ $t("settings.preferences.zen_mode") }}
+        {{ $t('settings.preferences.zen_mode') }}
         <template #description>
           {{ $t('settings.preferences.zen_mode_description') }}
         </template>
@@ -187,9 +191,9 @@ const userSettings = useUserSettings()
           {{ $t('settings.preferences.user_picker_description') }}
         </template>
       </SettingsToggleItem>
-       <SettingsToggleItem
+      <SettingsToggleItem
         :checked="getPreferences(userSettings, 'experimentalScrollTracker')"
-        @click="togglePreferences('experimentalScrollTracker')"
+        @click="resetTrackerDataOnUncheck('experimentalScrollTracker')"
       >
         {{ $t('settings.preferences.scroll_tracker') }}
         <template #description>
