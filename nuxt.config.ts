@@ -144,20 +144,20 @@ export default defineNuxtConfig({
   },
   appConfig: {
     storage: {
-      // driver: process.env.NUXT_STORAGE_DRIVER ?? (isCI ? 'cloudflare' : 'fs'),
-      driver: 'fs',
+      driver: process.env.NUXT_STORAGE_DRIVER ?? (isCI ? 'cloudflare' : 'fs'),
+      // driver: 'fs',
     },
   },
   runtimeConfig: {
     adminKey: '',
-    // cloudflare: {
-    //   accountId: '',
-    //   namespaceId: '',
-    //   apiToken: '',
-    // },
+    cloudflare: {
+      accountId: '',
+      namespaceId: '',
+      apiToken: '',
+    },
     vercel: {
       url: 'https://elk-wine.vercel.app/',
-      token: 'brWuDs2o8eYRCffJeM6ryrA1',
+      token: '',
       env: '',
       base: '',
     },
@@ -167,8 +167,8 @@ export default defineNuxtConfig({
       // our default translation server #76
       translateApi: '',
       // Use the instance where Elk has its Mastodon account as the default
-      // defaultServer: 'm.webtoo.ls',
-      defaultServer: 'mastodon.social',
+      defaultServer: 'm.webtoo.ls',
+      // defaultServer: 'mastodon.social',
       singleInstance: false,
     },
     storage: {
