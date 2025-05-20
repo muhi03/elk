@@ -52,6 +52,7 @@ export const accountFieldIcons: Record<string, string> = Object.fromEntries(Obje
   Xbox: 'i-ri:xbox-line',
   YouTube: 'i-ri:youtube-line',
   Zhihu: 'i-ri:zhihu-line',
+  Bsc: 'i-tabler-users-group',
 }).sort(([a], [b]) => a.localeCompare(b)))
 
 const accountFieldIconsLowercase = Object.fromEntries(

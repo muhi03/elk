@@ -12,11 +12,11 @@ const useStarFavoriteIcon = usePreferences('useStarFavoriteIcon')
 const useScrollTracker = usePreferences('experimentalScrollTracker')
 const lastAccessedNotificationRoute = useLocalStorage(
   STORAGE_KEY_LAST_ACCESSED_NOTIFICATION_ROUTE,
-  ''
+  '',
 )
 const lastAccessedExploreRoute = useLocalStorage(
   STORAGE_KEY_LAST_ACCESSED_EXPLORE_ROUTE,
-  ''
+  '',
 )
 
 const notificationsLink = computed(() => {
@@ -180,7 +180,7 @@ const exploreLink = computed(() => {
       v-if="useScrollTracker"
       :text="$t('nav.scroll_tracker_list')"
       to="/scrolltracker"
-      icon="i-tabler:brand-matrix"
+      icon="i-tabler-users-group"
       :command="command"
     />
   </nav>

@@ -1,7 +1,4 @@
 <script setup lang="ts">
-import { rand } from '@vueuse/core'
-import { onMounted } from 'vue'
-
 const { t } = useI18n()
 // const params = useRoute().params
 // const handle = computed(() => params.account as string)
@@ -88,7 +85,7 @@ useHydratedHead({
     gap-2
     @click="$scrollToTop"
   >
-    <div i-tabler:brand-matrix />
+    <div i-tabler-users-group />
     <span>{{ $t('nav.scroll_tracker_list') }}</span>
   </NuxtLink>
   <!-- <TimelinePinned v-if="isHydrated && currentUser" /> -->
@@ -103,7 +100,7 @@ useHydratedHead({
     <!-- <AccountCardScroller :trackerObject="item" /> -->
     <AccountCardScroller
       :account="item.account"
-      :timeSpent="item.timeSpent || 0"
+      :time-spent="item.timeSpent || 0"
       hover-card
       border="b base"
       py2
