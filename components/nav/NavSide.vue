@@ -180,7 +180,7 @@ const exploreLink = computed(() => {
       v-if="useScrollTracker"
       :text="$t('nav.scroll_tracker_list')"
       to="/scrolltracker"
-      icon="i-tabler-users-group"
+      icon="i-tabler:brand-matrix"
       :command="command"
     />
   </nav>

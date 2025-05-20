@@ -85,7 +85,7 @@ useHydratedHead({
     gap-2
     @click="$scrollToTop"
   >
-    <div i-tabler-users-group />
+    <div i-tabler:brand-matrix />
     <span>{{ $t('nav.scroll_tracker_list') }}</span>
   </NuxtLink>
   <!-- <TimelinePinned v-if="isHydrated && currentUser" /> -->
