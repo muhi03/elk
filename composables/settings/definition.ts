@@ -48,7 +48,7 @@ export interface PreferencesSettings {
   experimentalGitHubCards: boolean
   experimentalUserPicker: boolean
   experimentalEmbeddedMedia: boolean
-  experimentalScrollTracker: boolean
+  experimentalEngagementInsights: boolean
 }
 
 export interface TrackerObject {
@@ -115,7 +115,7 @@ export const DEFAULT__PREFERENCES_SETTINGS: PreferencesSettings = {
   experimentalGitHubCards: true,
   experimentalUserPicker: true,
   experimentalEmbeddedMedia: false,
-  experimentalScrollTracker: false,
+  experimentalEngagementInsights: false,
 }
 
 export function getDefaultUserSettings(locales: string[]): UserSettings {

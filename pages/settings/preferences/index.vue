@@ -192,12 +192,14 @@ const userSettings = useUserSettings()
         </template>
       </SettingsToggleItem>
       <SettingsToggleItem
-        :checked="getPreferences(userSettings, 'experimentalScrollTracker')"
-        @click="resetTrackerDataOnUncheck('experimentalScrollTracker')"
+        :checked="
+          getPreferences(userSettings, 'experimentalEngagementInsights')
+        "
+        @click="resetTrackerDataOnUncheck('experimentalEngagementInsights')"
       >
-        {{ $t('settings.preferences.scroll_tracker') }}
+        {{ $t('settings.preferences.engagement_insights') }}
         <template #description>
-          {{ $t('settings.preferences.scroll_tracker_description') }}
+          {{ $t('settings.preferences.engagement_insights_description') }}
         </template>
       </SettingsToggleItem>
     </section>

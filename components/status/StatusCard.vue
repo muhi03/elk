@@ -89,7 +89,7 @@ const tracker = useScrollTrackerData()
 function trackVisibility() {
   const scrollTrackerFlag = getPreferences(
     userSettings.value,
-    'experimentalScrollTracker'
+    'experimentalEngagementInsights'
   )
   if (scrollTrackerFlag === false) {
     return

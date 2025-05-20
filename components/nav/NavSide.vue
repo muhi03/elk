@@ -9,14 +9,14 @@ defineProps<{
 }>()
 const { notifications } = useNotifications()
 const useStarFavoriteIcon = usePreferences('useStarFavoriteIcon')
-const useScrollTracker = usePreferences('experimentalScrollTracker')
+const useScrollTracker = usePreferences('experimentalEngagementInsights')
 const lastAccessedNotificationRoute = useLocalStorage(
   STORAGE_KEY_LAST_ACCESSED_NOTIFICATION_ROUTE,
-  '',
+  ''
 )
 const lastAccessedExploreRoute = useLocalStorage(
   STORAGE_KEY_LAST_ACCESSED_EXPLORE_ROUTE,
-  '',
+  ''
 )
 
 const notificationsLink = computed(() => {
@@ -167,20 +167,19 @@ const exploreLink = computed(() => {
       user-only
       :command="command"
     />
+    <NavSideItem
+      v-if="useScrollTracker"
+      :text="$t('nav.scroll_insights')"
+      to="/scrolltracker"
+      icon="i-tabler-users-group"
+      :command="command"
+    />
 
     <div class="spacer" shrink hidden sm:block />
     <NavSideItem
       :text="$t('nav.settings')"
       to="/settings"
       icon="i-ri:settings-3-line"
-      :command="command"
-    />
-
-    <NavSideItem
-      v-if="useScrollTracker"
-      :text="$t('nav.scroll_tracker_list')"
-      to="/scrolltracker"
-      icon="i-tabler:brand-matrix"
       :command="command"
     />
   </nav>
