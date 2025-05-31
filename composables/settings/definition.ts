@@ -51,10 +51,8 @@ export interface PreferencesSettings {
   experimentalEngagementInsights: boolean
 }
 
-export interface TrackerObject {
+export interface EngagementObject {
   account: mastodon.v1.Account
-  username: string
-  url: string
   enterTime: number
   leaveTime: number
   timeSpent?: number
@@ -67,7 +65,7 @@ export interface UserSettings {
   language: string
   disabledTranslationLanguages: string[]
   themeColors?: ThemeColors
-  scrollTrackerData: TrackerObject[]
+  engagementObjects: EngagementObject[]
 }
 
 export interface ThemeColors {
@@ -124,7 +122,7 @@ export function getDefaultUserSettings(locales: string[]): UserSettings {
     fontSize: DEFAULT_FONT_SIZE,
     disabledTranslationLanguages: [],
     preferences: DEFAULT__PREFERENCES_SETTINGS,
-    scrollTrackerData: [],
+    engagementObjects: [],
   }
 }
 

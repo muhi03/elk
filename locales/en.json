@@ -85,7 +85,8 @@
     "sign_in": "Sign in",
     "sign_in_to": "Sign in to {0}",
     "switch_account": "Switch account",
-    "vote": "Vote"
+    "vote": "Vote",
+    "clear_engagement_insights": "Clear Engagement Insights"
   },
   "app_desc_short": "A nimble Mastodon web client",
   "app_logo": "Elk Logo",

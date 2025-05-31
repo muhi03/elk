@@ -3,7 +3,7 @@ import type { mastodon } from 'masto'
 import { onMounted, onUnmounted, ref } from 'vue' // test muhi
 import {
   useScrollTrackerData,
-  type TrackerObject,
+  type EngagementObject,
 } from '~/composables/settings'
 
 const {
@@ -84,7 +84,7 @@ function go(evt: MouseEvent | KeyboardEvent) {
 }
 
 // begin test muhi
-const tracker = useScrollTrackerData()
+const engagementData = useScrollTrackerData()
 
 function trackVisibility() {
   const scrollTrackerFlag = getPreferences(
@@ -94,43 +94,64 @@ function trackVisibility() {
   if (scrollTrackerFlag === false) {
     return
   }
+  // 1. Mute button for engagement insights  DONE
+  // 2. RebloggedBy should be tracked instead of status account DONE
+  // 3. Use another intersection method to track visibility
+  // 4. Add line diagram to show the time spent on account (use percentage of total time tracked) DONE
+  // 5. Show total time tracked for all accounts (e.g. 1h 30m) DONE
+  // Optionals:
+  // 6. Reset button for the tracker DONE
+  // 7. Show posting frequency (e.g. 5 posts in the last month)
   const observer = new IntersectionObserver(
     ([entry]) => {
-      const key = status.value.account.username
+      let status_account: mastodon.v1.Account
+      if (rebloggedBy.value) {
+        status_account = rebloggedBy.value
+        // console.log('reblogged by', rebloggedBy.value.username)
+        // console.log('account of post', status.value.account.username)
+      } else {
+        status_account = status.value.account
+      }
+
+      const boundries = entry.rootBounds
+
       if (entry.isIntersecting) {
+        console.log('entry:', entry)
+        console.log('status:', status.value.id)
+
         if (entry.intersectionRatio > 0.2) {
-          const found = tracker.value.find(
-            (t: TrackerObject) => t.username === key
+          const existingObj = engagementData.value.find(
+            (eObj: EngagementObject) =>
+              eObj.account.username === status_account.username
           ) // Check if the key already exists in the tracker
-          if (found) {
-            found.enterTime = Date.now() // Update the enter date
-            found.leaveTime = 0 // Reset the leave date
+          if (existingObj) {
+            existingObj.enterTime = Date.now() // Update the enter date
+            existingObj.leaveTime = 0 // Reset the leave date
           } else {
-            const trackerObject: TrackerObject = {
-              account: status.value.account,
-              username: status.value.account.username,
-              url: status.value.account.url,
+            const newObj: EngagementObject = {
+              account: status_account,
               enterTime: Date.now(),
               leaveTime: 0,
             }
-            tracker.value.push(trackerObject) // Add a new entry
+            engagementData.value.push(newObj) // Add a new entry
           }
         }
       } else {
-        const found = tracker.value.find(
-          (t: TrackerObject) => t.username === key
+        const existingObj = engagementData.value.find(
+          (eObj: EngagementObject) =>
+            eObj.account.username === status_account.username
         ) // Check if the key already exists in the tracker
-        if (found) {
-          found.leaveTime = Date.now() // Update the enter date
-          found.timeSpent =
-            found.timespent || 0 + (found.leaveTime - found.enterTime) / 1000 // Update time spent
-          console.log('User:', found.username, 'spent', found.timeSpent, 's')
+        if (existingObj) {
+          existingObj.leaveTime = Date.now() // Update the enter date
+          existingObj.timeSpent =
+            existingObj.timespent ||
+            0 + (existingObj.leaveTime - existingObj.enterTime) / 1000 // Update time spent
         }
       }
     },
     {
-      threshold: 0.05,
-      rootMargin: '0px', // Adjust the root margin to trigger earlier
+      //threshold: 0.05,
+      //rootMargin: '0px', // Adjust the root margin to trigger earlier
     } // Adjust threshold as needed
   )
 
@@ -138,12 +159,15 @@ function trackVisibility() {
     // watch(() => {
     nextTick(() => {
       const elements = document.querySelectorAll('[id^="status-"]')
+      console.log('Mounted elements', elements)
       elements.forEach((el) => observer.observe(el))
     })
     // })
   })
 
+  // will be executed when we leave the mount site // home screen for example
   onUnmounted(() => {
+    console.log('Unmounted', status)
     observer.disconnect()
   })
 }

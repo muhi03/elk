@@ -29,7 +29,7 @@ export default defineNuxtConfig({
     '@nuxtjs/color-mode',
     '@unlazy/nuxt',
     '@nuxt/test-utils/module',
-    ...(isDevelopment || isWindows) ? [] : ['nuxt-security'],
+    ...((isDevelopment || isWindows) ? [] : ['nuxt-security']),
     '~/modules/emoji-mart-translation',
     '~/modules/purge-comments',
     '~/modules/build-env',
@@ -62,9 +62,7 @@ export default defineNuxtConfig({
     '~/styles/default-theme.css',
     '~/styles/vars.css',
     '~/styles/global.css',
-    ...process.env.TAURI_PLATFORM === 'macos'
-      ? []
-      : ['~/styles/scrollbars.css'],
+    ...(process.env.TAURI_PLATFORM === 'macos' ? [] : ['~/styles/scrollbars.css']),
     '~/styles/tiptap.css',
     '~/styles/dropdown.css',
   ],

@@ -68,17 +68,20 @@ export function togglePreferences(key: keyof PreferencesSettings) {
 
 export function resetTrackerDataOnUncheck(key: keyof PreferencesSettings) {
   const scrollTrackerData = useScrollTrackerData()
-  console.log(useUserSettings().value.scrollTrackerData)
+  console.log(useUserSettings().value.engagementObjects)
   const flag = usePreferences(key)
-  if (flag.value) {  
+  if (flag.value) {
     scrollTrackerData.value = []
-  } 
+  }
   flag.value = !flag.value
 
-  console.log(useUserSettings().value.scrollTrackerData)
+  console.log(useUserSettings().value.engagementObjects)
 }
 
-
+export function removeEngagementInsights() {
+  const userSettings = useUserSettings()
+  userSettings.value.engagementObjects = []
+}
 
 export function useScrollTrackerData(): Ref<any[]> {
   const userSettings = useUserSettings()
@@ -86,12 +89,12 @@ export function useScrollTrackerData(): Ref<any[]> {
   return computed({
     get() {
       // Check if scrollTrackerData is a string and parse it
-      if (userSettings.value.scrollTrackerData === undefined)
-        userSettings.value.scrollTrackerData = []
-      return userSettings.value.scrollTrackerData
+      if (userSettings.value.engagementObjects === undefined)
+        userSettings.value.engagementObjects = []
+      return userSettings.value.engagementObjects
     },
     set(value: any[]) {
-      userSettings.value.scrollTrackerData = value
+      userSettings.value.engagementObjects = value
     },
   })
 }

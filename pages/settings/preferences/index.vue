@@ -202,6 +202,20 @@ const userSettings = useUserSettings()
           {{ $t('settings.preferences.engagement_insights_description') }}
         </template>
       </SettingsToggleItem>
+      <div px-6 pt-3 pb-6 flex="~ col gap6">
+        <button
+          btn-solid
+          font-bold
+          py2
+          full-w
+          sm-wa
+          flex="~ gap2 center"
+          :onclick="removeEngagementInsights()"
+        >
+          <span aria-hidden="true" i-ri:delete-bin-line />
+          {{ $t('action.clear_engagement_insights') }}
+        </button>
+      </div>
     </section>
   </MainContent>
 </template>

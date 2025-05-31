@@ -1,42 +1,104 @@
 <script setup lang="ts">
 import type { mastodon } from 'masto'
 
-const { account } = defineProps<{
-  account: mastodon.v1.Account
+const { engagementObject } = defineProps<{
+  engagementObject: EngagementObject
   hoverCard?: boolean
   relationshipContext?: 'followedBy' | 'following'
-  timeSpent: number
 }>()
 
-cacheAccount(account)
+cacheAccount(engagementObject.account)
+const isSelf = useSelfAccount(() => engagementObject.account)
+const relationship = useRelationship(engagementObject.account)
 
-const isSelf = useSelfAccount(() => account)
-const relationship = useRelationship(account)
+const totalTimeSpent = computed(() => {
+  return useUserSettings().value.engagementObjects.reduce(
+    (total: number, item) => {
+      return total + (item.timeSpent || 0)
+    },
+    0
+  )
+})
+
+const timeSpentOfTotalToInteger = computed(() => {
+  return Math.ceil(
+    ((engagementObject.timeSpent ?? 0) / totalTimeSpent.value) * 100
+  )
+})
 </script>
 
 <template>
-  <div flex justify-between hover:bg-active transition-100>
-    <AccountInfo
-      :account="account"
-      hover
-      p1
-      as="router-link"
-      :hover-card="hoverCard"
-      shrink
-      overflow-hidden
-      :to="getAccountRoute(account)"
-    />
-    <!-- <slot>
+  <div hover:bg-active transition-100>
+    <div
+      my
+      bg-primary-light
+      py-1
+      rounded-full
+      :style="{ width: timeSpentOfTotalToInteger + '%' }"
+    >
+      <!-- 
+      text-align-right
+      text-sm
+      font-semibold
+      c-white
+      justify-center
+      pr-1 
+      -->
+      <!-- {{ timeSpentOfTotalToInteger }}% -->
+    </div>
+    <!-- <div>
+      {{
+        '★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★'
+      }}
+    </div> -->
+    <div flex justify-between hover:bg-active transition-100>
+      <AccountInfo
+        :account="engagementObject.account"
+        hover
+        p1
+        as="router-link"
+        :hover-card="hoverCard"
+        shrink
+        overflow-hidden
+        :to="getAccountRoute(engagementObject.account)"
+      />
+      <!-- <slot>
       <div h-full p1 shrink-0>{{ timeSpent.toFixed(2) }} seconds</div>
     </slot> -->
-    <span inset-ie-0 flex gap-2 items-right>
-      <slot h-full p1 shrink-0>
-        <CommonTooltip :content="$t('list.modify_account')">
-          <VDropdown v-if="!isSelf && relationship?.following">
-            <!-- missing is still the proper design and maybe a check for user account if it is self -->
-            <!-- <VDropdown> -->
+      <span inset-ie-0 flex gap-2 items-right>
+        <slot h-full p1 shrink-0 v-if="!isSelf && relationship?.following">
+          <CommonTooltip :content="$t('list.modify_account')">
+            <VDropdown>
+              <!-- missing is still the proper design and maybe a check for user account if it is self -->
+              <button
+                :aria-label="$t('list.modify_account')"
+                rounded-full
+                text-sm
+                p2
+                border-1
+                transition-colors
+                border-base
+                hover:text-primary
+              >
+                <!-- border-red
+              text-red -->
+                <span i-ri:play-list-add-fill block text-current />
+              </button>
+              <!-- <VDropdown> -->
+              <template #popper>
+                <ListLists :user-id="engagementObject.account.id" />
+              </template>
+            </VDropdown>
+          </CommonTooltip>
+        </slot>
+        <slot h-full p1 shrink-0 v-if="!isSelf && !relationship?.blocking">
+          <CommonTooltip
+            :content="
+              $t('menu.mute_account', [`@${engagementObject.account.acct}`])
+            "
+          >
             <button
-              :aria-label="$t('list.modify_account')"
+              v-if="!relationship?.muting"
               rounded-full
               text-sm
               p2
@@ -44,26 +106,39 @@ const relationship = useRelationship(account)
               transition-colors
               border-base
               hover:text-primary
+              :aria-label="$t('list.mute_account')"
+              @click="
+                toggleMuteAccount(relationship!, engagementObject.account)
+              "
             >
-              <!-- border-red
-              text-red -->
-              <span i-ri:play-list-add-fill block text-current />
+              <span i-ri:volume-mute-line block text-current />
             </button>
-            <template #popper>
-              <ListLists :user-id="account.id" />
-            </template>
-          </VDropdown>
-        </CommonTooltip>
-      </slot>
+            <!-- <button
+            v-else
+            rounded-full
+            text-sm
+            p2
+            border-1
+            transition-colors
+            border-base
+            hover:text-primary
+            :aria-label="$t('list.unmute_account')"
+            @click="toggleMuteAccount(relationship!, account)"
+          >
+            <span i-ri:volume-up-fill block text-current />
+          </button> -->
+          </CommonTooltip>
+        </slot>
 
-      <slot>
-        <!-- <div h-full p1 shrink-0> -->
-        <AccountFollowButton
-          :account="account"
-          :context="relationshipContext"
-        />
-        <!-- </div> -->
-      </slot>
-    </span>
+        <slot>
+          <!-- <div h-full p1 shrink-0> -->
+          <AccountFollowButton
+            :account="engagementObject.account"
+            :context="relationshipContext"
+          />
+          <!-- </div> -->
+        </slot>
+      </span>
+    </div>
   </div>
 </template>
