@@ -66,24 +66,26 @@ export function togglePreferences(key: keyof PreferencesSettings) {
   flag.value = !flag.value
 }
 
-export function resetTrackerDataOnUncheck(key: keyof PreferencesSettings) {
-  const scrollTrackerData = useScrollTrackerData()
+export function resetEngagementObjectsOnUncheck(
+  key: keyof PreferencesSettings
+) {
+  const engagementObjects = useEngagementObjects()
   console.log(useUserSettings().value.engagementObjects)
   const flag = usePreferences(key)
   if (flag.value) {
-    scrollTrackerData.value = []
+    engagementObjects.value = []
   }
   flag.value = !flag.value
 
   console.log(useUserSettings().value.engagementObjects)
 }
 
-export function removeEngagementInsights() {
+export function removeEngagementObjects() {
   const userSettings = useUserSettings()
   userSettings.value.engagementObjects = []
 }
 
-export function useScrollTrackerData(): Ref<any[]> {
+export function useEngagementObjects(): Ref<any[]> {
   const userSettings = useUserSettings()
 
   return computed({

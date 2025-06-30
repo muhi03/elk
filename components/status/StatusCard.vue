@@ -2,7 +2,7 @@
 import type { mastodon } from 'masto'
 import { onMounted, onUnmounted, ref } from 'vue' // test muhi
 import {
-  useScrollTrackerData,
+  useEngagementObjects,
   type EngagementObject,
 } from '~/composables/settings'
 
@@ -83,44 +83,28 @@ function go(evt: MouseEvent | KeyboardEvent) {
   }
 }
 
-// begin test muhi
-const engagementData = useScrollTrackerData()
+const engagementObjects = useEngagementObjects()
 
 function trackVisibility() {
-  const scrollTrackerFlag = getPreferences(
+  const engagementInsightsActive = getPreferences(
     userSettings.value,
     'experimentalEngagementInsights'
   )
-  if (scrollTrackerFlag === false) {
+  if (engagementInsightsActive === false) {
     return
   }
-  // 1. Mute button for engagement insights  DONE
-  // 2. RebloggedBy should be tracked instead of status account DONE
-  // 3. Use another intersection method to track visibility
-  // 4. Add line diagram to show the time spent on account (use percentage of total time tracked) DONE
-  // 5. Show total time tracked for all accounts (e.g. 1h 30m) DONE
-  // Optionals:
-  // 6. Reset button for the tracker DONE
-  // 7. Show posting frequency (e.g. 5 posts in the last month)
   const observer = new IntersectionObserver(
     ([entry]) => {
       let status_account: mastodon.v1.Account
       if (rebloggedBy.value) {
         status_account = rebloggedBy.value
-        // console.log('reblogged by', rebloggedBy.value.username)
-        // console.log('account of post', status.value.account.username)
       } else {
         status_account = status.value.account
       }
 
-      const boundries = entry.rootBounds
-
       if (entry.isIntersecting) {
-        console.log('entry:', entry)
-        console.log('status:', status.value.id)
-
         if (entry.intersectionRatio > 0.2) {
-          const existingObj = engagementData.value.find(
+          const existingObj = engagementObjects.value.find(
             (eObj: EngagementObject) =>
               eObj.account.username === status_account.username
           ) // Check if the key already exists in the tracker
@@ -133,11 +117,11 @@ function trackVisibility() {
               enterTime: Date.now(),
               leaveTime: 0,
             }
-            engagementData.value.push(newObj) // Add a new entry
+            engagementObjects.value.push(newObj) // Add a new entry
           }
         }
       } else {
-        const existingObj = engagementData.value.find(
+        const existingObj = engagementObjects.value.find(
           (eObj: EngagementObject) =>
             eObj.account.username === status_account.username
         ) // Check if the key already exists in the tracker
@@ -150,30 +134,25 @@ function trackVisibility() {
       }
     },
     {
-      //threshold: 0.05,
-      //rootMargin: '0px', // Adjust the root margin to trigger earlier
+      threshold: 0.05,
+      rootMargin: '0px', // Adjust the root margin to trigger earlier
     } // Adjust threshold as needed
   )
 
   onMounted(() => {
-    // watch(() => {
     nextTick(() => {
       const elements = document.querySelectorAll('[id^="status-"]')
-      console.log('Mounted elements', elements)
       elements.forEach((el) => observer.observe(el))
     })
-    // })
   })
 
   // will be executed when we leave the mount site // home screen for example
   onUnmounted(() => {
-    console.log('Unmounted', status)
     observer.disconnect()
   })
 }
 
 trackVisibility()
-// end test muhi
 
 const createdAt = useFormattedDateTime(status.value.createdAt)
 const timeAgoOptions = useTimeAgoOptions(true)

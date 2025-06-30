@@ -1,14 +1,5 @@
 <script setup lang="ts">
-import Lists from '~/components/list/Lists.vue'
-
 const { t } = useI18n()
-// const params = useRoute().params
-// const handle = computed(() => params.account as string)
-
-// definePageMeta({ name: 'account-following' })
-
-// const account = await fetchAccountByHandle(handle.value)
-// const paginator = account ? useMastoClient().v1.accounts.$select(account.id).following.list() : null
 
 const engagementObjects = useUserSettings().value.engagementObjects
 
@@ -21,18 +12,7 @@ watch(
   },
   { immediate: true }
 )
-//engagementObjects.sort((a, b) => {
-//  return (b.timeSpent || 0) - (a.timeSpent || 0)
-//})
 
-// const isSelf = useSelfAccount(account)
-
-// if (account) {
-//  useHydratedHead({
-//    title: () => `${t('account.following')} | ${getDisplayName(account)} (@${account.acct})`,
-//  })
-// }
-// if (account) {
 useHydratedHead({
   title: () => `${t('nav.scroll_insights')} `,
 })
@@ -42,9 +22,6 @@ const getTimeString = (): string => {
   const secs = engagementObjects.reduce((total, item) => {
     return total + (item.timeSpent || 0)
   }, 0)
-  // const hours = Math.floor(secs / 3600)
-  // const minutes = Math.floor((secs % 3600) / 60)
-  // const seconds = secs % 60
 
   const dateObj = new Date(secs * 1000)
   const hours = dateObj.getUTCHours()
@@ -57,14 +34,10 @@ const getTimeString = (): string => {
     ':' +
     seconds.toString().padStart(2, '0')
   return timeString
-  // return `${hours}h ${minutes}m ${seconds}s`
 }
 </script>
 
 <template>
-  <!-- <template v-if="paginator"> -->
-  <!-- <AccountPaginator :paginator="paginator" :relationship-context="isSelf ? 'following' : undefined" context="following" :account="account" /> -->
-  <!-- </template> -->
   <MainContent>
     <template #title>
       <NuxtLink

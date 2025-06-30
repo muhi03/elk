@@ -9,7 +9,9 @@ defineProps<{
 }>()
 const { notifications } = useNotifications()
 const useStarFavoriteIcon = usePreferences('useStarFavoriteIcon')
-const useScrollTracker = usePreferences('experimentalEngagementInsights')
+const engagementInsightsActive = usePreferences(
+  'experimentalEngagementInsights'
+)
 const lastAccessedNotificationRoute = useLocalStorage(
   STORAGE_KEY_LAST_ACCESSED_NOTIFICATION_ROUTE,
   ''
@@ -168,7 +170,7 @@ const exploreLink = computed(() => {
       :command="command"
     />
     <NavSideItem
-      v-if="useScrollTracker"
+      v-if="engagementInsightsActive"
       :text="$t('nav.scroll_insights')"
       to="/scrolltracker"
       icon="i-tabler-users-group"
